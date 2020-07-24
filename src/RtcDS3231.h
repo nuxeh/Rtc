@@ -10,18 +10,18 @@
 #include "RtcUtility.h"
 
 
-//I2C Slave Address  
+//I2C Slave Address
 const uint8_t DS3231_ADDRESS = 0x68;
 
 //DS3231 Register Addresses
 const uint8_t DS3231_REG_TIMEDATE  = 0x00;
 const uint8_t DS3231_REG_ALARMONE  = 0x07;
 const uint8_t DS3231_REG_ALARMTWO  = 0x0B;
-                                         
+
 const uint8_t DS3231_REG_CONTROL   = 0x0E;
 const uint8_t DS3231_REG_STATUS    = 0x0F;
 const uint8_t DS3231_REG_AGING     = 0x10;
-                                         
+
 const uint8_t DS3231_REG_TEMP      = 0x11;
 
 //DS3231 Register Data Size if not just 1
@@ -125,7 +125,7 @@ protected:
     uint8_t _dayOf;
     uint8_t _hour;
     uint8_t _minute;
-    uint8_t _second;  
+    uint8_t _second;
 };
 
 // minutes accuracy
@@ -209,7 +209,7 @@ enum DS3231SquareWavePinMode
     DS3231SquareWavePin_ModeAlarmOne,
     DS3231SquareWavePin_ModeAlarmTwo,
     // note:  the same as DS3231SquareWavePin_ModeAlarmOne | DS3231SquareWavePin_ModeAlarmTwo
-    DS3231SquareWavePin_ModeAlarmBoth, 
+    DS3231SquareWavePin_ModeAlarmBoth,
     DS3231SquareWavePin_ModeClock
 };
 
@@ -277,6 +277,24 @@ public:
         _wire.write(0); // S
         _wire.write(0); // M
         _wire.write(0); // H
+
+        _wire.endTransmission();
+    }
+
+    void SetSeconds(uint32_t seconds) {
+	uint32_t second = seconds;
+
+        _wire.beginTransmission(DS3231_ADDRESS);
+        _wire.write(DS3231_REG_TIMEDATE);
+
+	uint8_t hour = second % 3600;
+	second -= hour * 3600;
+	uint8_t minute = second / 60;
+	second -= minute * 60;
+
+        _wire.write(second); // S
+        _wire.write(minute); // M
+        _wire.write(hour);   // H
 
         _wire.endTransmission();
     }
@@ -498,7 +516,7 @@ public:
         {
             if (pinMode == DS3231SquareWavePin_ModeClock)
             {
-                creg &= ~_BV(DS3231_INTCN); // clear INTCN to enable clock SQW 
+                creg &= ~_BV(DS3231_INTCN); // clear INTCN to enable clock SQW
             }
             else
             {
@@ -565,7 +583,7 @@ public:
         {
             rtcDow = RtcDateTime::ConvertDowToRtc(rtcDow);
         }
-        
+
         _wire.write(Uint8ToBcd(rtcDow) | ((alarm.ControlFlags() & 0x0c) << 4));
 
         _lastError = _wire.endTransmission();
