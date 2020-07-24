@@ -287,7 +287,7 @@ public:
         _wire.beginTransmission(DS3231_ADDRESS);
         _wire.write(DS3231_REG_TIMEDATE);
 
-	uint8_t hour = second % 3600;
+	uint8_t hour = second / 3600;
 	second -= hour * 3600;
 	uint8_t minute = second / 60;
 	second -= minute * 60;
