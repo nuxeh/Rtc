@@ -325,6 +325,32 @@ public:
         _lastError = _wire.endTransmission();
     }
 
+    uint32_t GetSeconds(void) {
+        _wire.beginTransmission(DS3231_ADDRESS);
+        _wire.write(DS3231_REG_TIMEDATE);
+        _lastError = _wire.endTransmission();
+        if (_lastError != 0) {
+            return 0;
+        }
+
+        uint8_t bytesRead = _wire.requestFrom(DS3231_ADDRESS, 3);
+        if (bytesRead != 3) {
+            _lastError = 4;
+            return 0;
+        }
+
+        uint8_t second = BcdToUint8(_wire.read() & 0x7F);
+        uint8_t minute = BcdToUint8(_wire.read());
+        uint8_t hour = BcdToBin24Hour(_wire.read());
+
+	uint32_t secs = 0;
+	uint32_t secs += second;
+	uint32_t secs += minute * 60;
+	uint32_t secs += hour * 60 * 60;
+
+	return secs;
+    }
+
     uint8_t GetYear(void) {
         _wire.beginTransmission(DS3231_ADDRESS);
         _wire.write(0x6);
