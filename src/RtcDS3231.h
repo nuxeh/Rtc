@@ -344,9 +344,9 @@ public:
         uint8_t hour = BcdToBin24Hour(_wire.read());
 
 	uint32_t secs = 0;
-	uint32_t secs += second;
-	uint32_t secs += minute * 60;
-	uint32_t secs += hour * 60 * 60;
+	secs += second;
+	secs += minute * 60;
+	secs += hour * 60 * 60;
 
 	return secs;
     }
