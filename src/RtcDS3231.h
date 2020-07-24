@@ -270,6 +270,24 @@ public:
         setReg(DS3231_REG_CONTROL, creg);
     }
 
+    void SetDateTimeZero() {
+        _wire.beginTransmission(DS3231_ADDRESS);
+        _wire.write(DS3231_REG_TIMEDATE);
+
+        _wire.write(0); // S
+        _wire.write(0); // M
+        _wire.write(0); // H
+
+        _wire.endTransmission();
+    }
+
+    void SetYear(uint8_t year) {
+        _wire.beginTransmission(DS3231_ADDRESS);
+        _wire.write(0x6);
+        _wire.write(Uint8ToBcd(year));
+        _wire.endTransmission();
+    }
+
     void SetDateTime(const RtcDateTime& dt)
     {
         // clear the invalid flag
@@ -305,6 +323,26 @@ public:
         _wire.write(Uint8ToBcd(year));
 
         _lastError = _wire.endTransmission();
+    }
+
+    uint8_t GetYear(void) {
+        _wire.beginTransmission(DS3231_ADDRESS);
+        _wire.write(0x6);
+
+        _lastError = _wire.endTransmission();
+        if (_lastError != 0) {
+            return 0;
+        }
+
+        uint8_t bytesRead = _wire.requestFrom(DS3231_ADDRESS, 1);
+        if (bytesRead != 1) {
+            _lastError = 4;
+            return 0;
+        }
+
+        uint8_t year = BcdToUint8(_wire.read());
+
+	return year;
     }
 
     RtcDateTime GetDateTime()
