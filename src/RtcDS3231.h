@@ -283,17 +283,17 @@ public:
 
     void SetSeconds(uint32_t seconds) {
 	uint32_t second = seconds;
-	uint32_t hour = second / 3600;
+	uint8_t hour = second / 3600;
 	second -= hour * 3600;
-	uint32_t minute = second / 60;
+	uint8_t minute = second / 60;
 	second -= minute * 60;
 
         _wire.beginTransmission(DS3231_ADDRESS);
         _wire.write(DS3231_REG_TIMEDATE);
 
-        _wire.write(second); // S
-        _wire.write(minute); // M
-        _wire.write(hour);   // H
+        _wire.write(Uint8ToBcd((uint8_t) second)); // S
+        _wire.write(Uint8ToBcd(minute)); // M
+        _wire.write(Uint8ToBcd(hour));   // H
 
         _wire.endTransmission();
     }
