@@ -283,6 +283,8 @@ public:
 
     void SetSeconds(uint32_t seconds) {
 	uint32_t second = seconds;
+	uint8_t day = second / 86400;
+	second -= day * 86400;
 	uint8_t hour = second / 3600;
 	second -= hour * 3600;
 	uint8_t minute = second / 60;
@@ -294,6 +296,10 @@ public:
         _wire.write(Uint8ToBcd((uint8_t) second)); // S
         _wire.write(Uint8ToBcd(minute)); // M
         _wire.write(Uint8ToBcd(hour));   // H
+
+	// Set day registers
+        _wire.write(Uint8ToBcd(1));
+        _wire.write(Uint8ToBcd(day + 1));
 
         _wire.endTransmission();
     }
