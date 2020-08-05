@@ -308,7 +308,7 @@ public:
 
 	// Set date register
         _wire.beginTransmission(DS3231_ADDRESS);
-        _wire.write(0x4);
+        _wire.write(0x04);
 
         _wire.write(Uint8ToBcd(day + 1));
 
@@ -381,7 +381,7 @@ public:
             return 0;
         }
 
-        uint8_t bytesRead = _wire.requestFrom(DS3231_ADDRESS, 3);
+        uint8_t bytesRead = _wire.requestFrom(DS3231_ADDRESS, 5);
         if (bytesRead != 3) {
             _lastError = 4;
             return 0;
@@ -398,7 +398,7 @@ public:
 	secs += second;
 	secs += minute * 60;
 	secs += hour * 60 * 60;
-	//secs += (day_of_month - 1) * 86400;
+	secs += (day_of_month - 1) * 86400;
 
 	return secs;
     }
