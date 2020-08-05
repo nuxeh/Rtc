@@ -398,7 +398,7 @@ public:
 	secs += second;
 	secs += minute * 60;
 	secs += hour * 60 * 60;
-	secs += (day_of_month - 1) * 86400;
+	//secs += (day_of_month - 1) * 86400;
 
 	return secs;
     }
