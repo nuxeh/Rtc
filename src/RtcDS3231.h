@@ -382,7 +382,7 @@ public:
         }
 
         uint8_t bytesRead = _wire.requestFrom(DS3231_ADDRESS, 5);
-        if (bytesRead != 3) {
+        if (bytesRead != 5) {
             _lastError = 4;
             return 0;
         }
