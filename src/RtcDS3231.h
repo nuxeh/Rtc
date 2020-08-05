@@ -318,6 +318,13 @@ public:
         _wire.endTransmission();
     }
 
+    void SetAlarmSeconds(uint8_t secs) {
+        _wire.beginTransmission(DS3231_ADDRESS);
+        _wire.write(0x7);
+        _wire.write(Uint8ToBcd(secs));
+        _wire.endTransmission();
+    }
+
     void SetDateTime(const RtcDateTime& dt)
     {
         // clear the invalid flag
@@ -423,6 +430,26 @@ public:
         uint8_t month = BcdToUint8(_wire.read() & 0x1f);
 
 	return month;
+    }
+
+    uint8_t GetAlarmSeconds(void) {
+        _wire.beginTransmission(DS3231_ADDRESS);
+        _wire.write(0x7);
+
+        _lastError = _wire.endTransmission();
+        if (_lastError != 0) {
+            return 0;
+        }
+
+        uint8_t bytesRead = _wire.requestFrom(DS3231_ADDRESS, 1);
+        if (bytesRead != 1) {
+            _lastError = 4;
+            return 0;
+        }
+
+	uint8_t sec = BcdToUint8(_wire.read() & 0x7f);
+
+	return sec;
     }
 
     RtcDateTime GetDateTime()
