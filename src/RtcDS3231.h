@@ -277,7 +277,11 @@ public:
         _wire.write(0); // S
         _wire.write(0); // M
         _wire.write(0); // H
-        _wire.write(1); // DOW
+        _wire.endTransmission();
+
+        _wire.beginTransmission(DS3231_ADDRESS);
+        _wire.write(0x04);
+
         _wire.write(1); // D
         _wire.write(1); // M
 
@@ -304,7 +308,7 @@ public:
 
 	// Set date register
         _wire.beginTransmission(DS3231_ADDRESS);
-        _wire.write(DS3231_REG_TIMEDATE);
+        _wire.write(0x4);
 
         _wire.write(Uint8ToBcd(day + 1));
 
