@@ -277,6 +277,9 @@ public:
         _wire.write(0); // S
         _wire.write(0); // M
         _wire.write(0); // H
+        _wire.write(1); // DOW
+        _wire.write(1); // D
+        _wire.write(1); // M
 
         _wire.endTransmission();
     }
