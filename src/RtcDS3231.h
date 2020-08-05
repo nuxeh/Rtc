@@ -373,10 +373,14 @@ public:
         uint8_t minute = BcdToUint8(_wire.read());
         uint8_t hour = BcdToBin24Hour(_wire.read());
 
+        uint8_t day_of_week = _wire.read();
+        uint8_t day_of_month = BcdToUint8(_wire.read());
+
 	uint32_t secs = 0;
 	secs += second;
 	secs += minute * 60;
 	secs += hour * 60 * 60;
+	secs += (day_of_month - 1) * 86400;
 
 	return secs;
     }
